@@ -1,0 +1,1712 @@
+{
+  "name": "Slack IT Knowledge Base RAG Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "serviceAccount",
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "{{YOUR_GOOGLE_DRIVE_FOLDER_ID}}",
+          "mode": "list",
+          "cachedResultName": "IT_KB_Supabase",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/{{YOUR_FOLDER_ID}}"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "0b48a55c-9b47-4913-9aec-264d3932c533",
+      "name": "File Created",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "position": [
+        1780,
+        1000
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googleApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_GOOGLEAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "serviceAccount",
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "{{YOUR_GOOGLE_DRIVE_FOLDER_ID}}",
+          "mode": "list",
+          "cachedResultName": "IT_KB_Supabase",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/{{YOUR_FOLDER_ID}}"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "id": "e17a7bc1-6483-439b-acb0-2b13f66466e5",
+      "name": "File Updated",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "position": [
+        1560,
+        980
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googleApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_GOOGLEAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "documents",
+        "filterType": "string",
+        "filterString": "=metadata->>drive_file_id=like.*{{ $json.file_id }}*"
+      },
+      "id": "b0e5b639-cf0e-4289-8ce7-96e6fd1e831f",
+      "name": "Delete Old Doc Rows",
+      "type": "n8n-nodes-base.supabase",
+      "position": [
+        2860,
+        1480
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_SUPABASEAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+              "name": "file_id",
+              "type": "string",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "id": "7d0b3a5e-9dfa-46d3-bf16-f6fc1d44f242",
+              "name": "extension",
+              "type": "string",
+              "value": "={{ $json.fileExtension }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c583b665-b756-4b8c-8150-34f559df9007",
+      "name": "Set File ID",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2640,
+        1480
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "tableId": "files",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $('Loop Over Items').all()[0].json.name }}"
+            },
+            {
+              "fieldId": "google_drive_id",
+              "fieldValue": "={{ $('Set File ID').all()[0].json.file_id }}"
+            },
+            {
+              "fieldId": "date_updated",
+              "fieldValue": "={{$now}}"
+            }
+          ]
+        }
+      },
+      "id": "558473fe-cc06-41d8-ab06-cc6c03a8c40e",
+      "name": "Create File record1",
+      "type": "n8n-nodes-base.supabase",
+      "position": [
+        4300,
+        1680
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_SUPABASEAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $('Get Parsed Data1').all()[0].json.markdown }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "=file_id",
+                "value": "={{ $json.id }}"
+              },
+              {
+                "name": "drive_file_id",
+                "value": "={{ $json.google_drive_id }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "87e490c4-f9cb-4821-a234-a9c9d2c93836",
+      "name": "Default Data Loader1",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "position": [
+        4600,
+        1500
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "373efd3c-f7dd-4efc-a268-ed05d8b2e309",
+      "name": "Embeddings OpenAI3",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        4360,
+        1480
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_OPENAIAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chunkSize": 500,
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "id": "17daf2dd-1d4c-498e-8404-7cc371f81894",
+      "name": "Recursive Character Text Splitter1",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "position": [
+        4600,
+        1340
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "afcfc728-9798-4703-998d-edc535eb859e",
+      "name": "Insert into Supabase Vectorstore1",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "position": [
+        4540,
+        1680
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_SUPABASEAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloud.llamaindex.ai/api/parsing/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "do_not_cache",
+              "value": "=true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4a523ad6-d74d-4207-8347-facc7f313fdd",
+      "name": "Upload File1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3300,
+        1480
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_HTTPHEADERAUTH_CREDENTIAL}"
+        },
+        "httpBearerAuth": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_HTTPBEARERAUTH_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.cloud.llamaindex.ai/api/parsing/job/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c0a43e5e-ec2b-49f5-bbc0-cef914c68c4c",
+      "name": "Get Processing Status1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3500,
+        1480
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_HTTPHEADERAUTH_CREDENTIAL}"
+        },
+        "httpBearerAuth": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_HTTPBEARERAUTH_CREDENTIAL}"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "amount": 7
+      },
+      "id": "68cc70a4-dba0-4ec9-8506-88bb20b37e87",
+      "name": "Wait to stay within service limits1",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        3920,
+        1240
+      ],
+      "webhookId": "17a96ed6-b5ff-47bb-a8a2-39c1eb40185a",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 1,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "0fa97d86-432a-409a-917e-5f1a002b1ab9",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "PENDING"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "PENDING"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 1,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "e6058aa0-a3e2-4ce3-9bed-6ff41a5be052",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "ERROR"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "ERROR"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 1,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "ceb6338f-4261-40ac-be11-91f61c7302ba",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "CANCELED"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "CANCELED"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 1,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "300fce8c-b19a-4d0c-86e8-f62853c70ce2",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "SUCCESS"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "SUCCESS"
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "id": "aef3b805-166e-47a8-a81c-900f999ae045",
+      "name": "Is Job Ready?1",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        3680,
+        1480
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "errorMessage": "Problem with Llamaparser. Error during parsing."
+      },
+      "id": "5233be31-2ecf-4ddd-96e2-b0fd614f535f",
+      "name": "Stop and Error1",
+      "type": "n8n-nodes-base.stopAndError",
+      "position": [
+        3920,
+        1500
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "=https://api.cloud.llamaindex.ai/api/parsing/job/{{ $json.id }}/result/markdown",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "09283faa-4ab9-4d59-a610-3491d7f2daf8",
+      "name": "Get Parsed Data1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3920,
+        1680
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_HTTPHEADERAUTH_CREDENTIAL}"
+        },
+        "httpBearerAuth": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_HTTPBEARERAUTH_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Add Llamaparse Header auth\nAuthorization: Bearer <api_key>",
+        "height": 80,
+        "width": 280,
+        "color": 3
+      },
+      "id": "5ef6959d-1eb4-49cd-9b19-3b0e1aaa0eb7",
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3300,
+        1680
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e9bbecd9-3d40-4a6a-9401-94daab15cde0",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.markdown }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "18fd1d0f-664e-4584-8154-794ca8aad768",
+      "name": "Set Text3",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        4100,
+        1680
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"challenge\":\"{{ $json.body.challenge }}\"}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "ffb9f969-6f9c-40d9-a987-b7ad037da64f",
+      "name": "Verify Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        2580,
+        440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "5dbf15dc-85b1-45b8-a4a6-3b1f17ca9fde",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        3240,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "89ed1b2a-5e42-4196-989d-f7f81df04b6d",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.body.event.user }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3d659c86-7aee-408d-b121-53f1439cf52b",
+      "name": "Check if Bot",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        2780,
+        440
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('Receive DMs').item.json[\"body\"][\"event\"][\"channel\"] }}",
+          "mode": "id"
+        },
+        "text": "On it! Let me check IT Knowledge base to see if there are any relevant links to answer your question. ",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "image",
+              "icon_url": "https://avatars.slack-edge.com/2024-08-30/7671440019297_d6ce97ff3ab5a3abf9c1_72.jpg"
+            }
+          }
+        }
+      },
+      "id": "1e11180a-26d8-4fc4-b433-f223e9d3fed5",
+      "name": "Send Initial Message",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        3060,
+        460
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "82689462-0f3f-4619-a440-dccd8fb5f13a",
+      "credentials": {
+        "slackApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_SLACKAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Receive DMs').item.json[\"body\"][\"event\"][\"channel\"] }}"
+        },
+        "timestamp": "={{ $('Send Initial Message').item.json[\"message_timestamp\"] }}"
+      },
+      "id": "de2af6ca-4cb0-49e8-a616-09222e6f8a85",
+      "name": "Delete Initial Message",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        4540,
+        460
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "7c81cc08-d226-46a0-8808-cce6b5b6672d",
+      "credentials": {
+        "slackApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_SLACKAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Receive DMs').item.json[\"body\"][\"event\"][\"channel\"] }}"
+        },
+        "text": "={{ $('Validate Response').item.json.validatedResponse }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "image",
+              "icon_url": "https://avatars.slack-edge.com/2024-08-30/7671440019297_d6ce97ff3ab5a3abf9c1_72.jpg"
+            }
+          }
+        }
+      },
+      "id": "726fe33f-ac80-44c0-960c-2b13dfdc5929",
+      "name": "Send Message",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        4800,
+        420
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "f95c5623-6bbc-4762-afd5-6d327a303789",
+      "credentials": {
+        "slackApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_SLACKAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "44c26a10-d54a-46ce-a522-5d83e8a854be",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1475ba8c-6d0e-4903-95d4-7d498e88bcbe",
+      "name": "Receive DMs",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        2360,
+        440
+      ],
+      "webhookId": "44c26a10-d54a-46ce-a522-5d83e8a854be",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.input }}",
+        "options": {
+          "humanMessage": "=A user asked an IT support question. Your mandatory process:\n\n1. Use the \u201cknowledge_base\u201d tool with their question as input.\n2. Wait for tool results before replying.\n3. If results: Use only those to answer and reference sources.\n4. If no results: Use this exact phrase:  \n   \u201cI don\u2019t have information about that in our knowledge base. Please contact IT support directly or try rephrasing your question with more specific terms.\u201d\n\nUser\u2019s question:  \n{{ $json.input }}\n\n\nRemember: You cannot answer ANY question without first consulting the knowledge_base tool. No exceptions.\n\n{format_instructions}",
+          "systemMessage": "=You are TruBot-IT, the company\u2019s IT assistant. Your ONLY source of truth is the \u201cknowledge_base\u201d tool, which searches IT documentation and procedures from the Supabase database.\n\n**Rules:**\n- For every user message, you MUST first search the knowledge_base tool with the full question.\n- ONLY respond based on the information returned by the tool.\n- If the tool returns results, use ONLY those to answer and reference the sources.\n- If the tool returns no results, reply exactly: \u201cI don\u2019t have information about that in our knowledge base. Please contact IT support directly or try rephrasing your question with more specific terms.\u201d\n- NEVER answer from general knowledge, memory, or outside data.\n- NEVER make up answers or summarize outside the tool\u2019s results.\n- Format all Slack links as <url|readable-name>.\n- Do not return arrays or objects inside \"action_input\"\u2014always a single string.\n\nRespond in a friendly, concise, and professional tone.",
+          "maxIterations": 5
+        }
+      },
+      "id": "c1325928-3849-4690-9c10-bd31eec8e936",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3820,
+        520
+      ],
+      "typeVersion": 1.5
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b930e664-e669-4105-bd10-3dbbc9764a08",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        3600,
+        780
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_OPENAIAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "72f7e646-6beb-4f41-8e9c-01167dca5384",
+      "name": "Embeddings OpenAI2",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        4060,
+        980
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_OPENAIAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "knowledge_base",
+        "toolDescription": "MANDATORY: Search the company IT knowledge base. Must be used for every user question before providing any response. Returns relevant IT documentation and procedures from Supabase.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "topK": 5,
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "cafb01ac-db44-407b-b104-4593269be78a",
+      "name": "Supabase Vector Store2",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "position": [
+        4020,
+        740
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_SUPABASEAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate that AI Agent actually used the knowledge base\nconst response = $json.output;\nconst originalInput = $('Receive DMs').item.json.body.event.text;\n\n// Check if response contains the no-results message\nconst noResultsMessage = \"I don't have information about that in our knowledge base\";\nconst hasNoResults = response.includes(noResultsMessage);\n\n// Check if response seems to contain general knowledge (red flags)\nconst generalKnowledgeFlags = [\n  \"generally speaking\",\n  \"typically\",\n  \"usually\",\n  \"in most cases\",\n  \"common practice\",\n  \"standard procedure\"\n];\n\nconst hasGeneralKnowledge = generalKnowledgeFlags.some(flag => \n  response.toLowerCase().includes(flag)\n);\n\n// If response contains general knowledge without database reference, flag it\nif (hasGeneralKnowledge && !hasNoResults && !response.includes(\"knowledge base\")) {\n  return [{\n    json: {\n      validatedResponse: \"I don't have information about that in our knowledge base. Please contact IT support directly or try rephrasing your question with more specific terms.\",\n      originalResponse: response,\n      flagged: true,\n      reason: \"Response contained general knowledge without database reference\"\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    validatedResponse: response,\n    originalResponse: response,\n    flagged: false\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4260,
+        500
+      ],
+      "id": "82071b81-8fd0-4e5c-8406-b290b9d7d214",
+      "name": "Validate Response"
+    },
+    {
+      "parameters": {
+        "url": "https://ptlagvwpdkjtalijqmbw.supabase.co/rest/v1/documents?select=id&limit=1",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3260,
+        460
+      ],
+      "id": "3c3a8fa9-67c5-4391-966a-4b8845d51203",
+      "name": "Check DB Connection",
+      "credentials": {
+        "supabaseApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_SUPABASEAPI_CREDENTIAL}"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "806da834-0d61-4129-91b6-395e7b2e47d5",
+              "leftValue": "={{ !!$json[\"error\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3460,
+        460
+      ],
+      "id": "50c521fa-7dd6-429e-a46a-18586d71b0fe",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f008cb7-c71a-4187-8874-a0a54aea321f",
+              "name": "Message",
+              "value": "Our knowledge base is currently unavailable. Please try again later or contact IT support directly.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3880,
+        240
+      ],
+      "id": "15a397ea-c65b-40cf-b8bc-7331728d9df3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Receive DMs').item.json.body.event.client_msg_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        3740,
+        820
+      ],
+      "id": "80ad71be-fe3c-44d6-8b0c-a672e43435c6",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_POSTGRES_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Receive DMs').item.json[\"body\"][\"event\"][\"channel\"] }}"
+        },
+        "text": "Our knowledge base is currently unavailable. Please try again later or contact IT support directly.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "image",
+              "icon_url": "https://avatars.slack-edge.com/2024-08-30/7671440019297_d6ce97ff3ab5a3abf9c1_72.jpg"
+            }
+          }
+        }
+      },
+      "id": "ce822003-3d62-452f-a0fc-b5e26845a211",
+      "name": "Send Message1",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        4360,
+        240
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "f95c5623-6bbc-4762-afd5-6d327a303789",
+      "credentials": {
+        "slackApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_SLACKAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Receive DMs').item.json[\"body\"][\"event\"][\"channel\"] }}"
+        },
+        "timestamp": "={{ $('Send Initial Message').item.json[\"message_timestamp\"] }}"
+      },
+      "id": "958c6072-b2e7-4de0-9f80-cc22a340f3fa",
+      "name": "Delete Initial Message1",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        4140,
+        200
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "7c81cc08-d226-46a0-8808-cce6b5b6672d",
+      "credentials": {
+        "slackApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_SLACKAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "706f45ae-6be9-4adc-937a-2649c077b590",
+              "name": "sessionId",
+              "value": "={{ $('Verify Webhook').item.json.body.event.client_msg_id }}",
+              "type": "string"
+            },
+            {
+              "id": "c1fd4787-310c-4e67-9d60-f6b1e3fd7c9f",
+              "name": "input",
+              "value": "={{ $('Verify Webhook').item.json.body.event.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3660,
+        480
+      ],
+      "id": "4d4f6965-6494-412d-8bfe-91c1d7a363b8",
+      "name": "Set"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        3880,
+        820
+      ],
+      "id": "60147fde-d854-4587-b2de-496488fd6750",
+      "name": "Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        4380,
+        760
+      ],
+      "id": "fcbdc8b9-0741-44ab-a469-fbcd8ad0c91f",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        1460
+      ],
+      "id": "f3d47299-2853-4c7a-8133-59f838a9c768",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "11IZVdhbW7gxJseyJMLuMkwZCnWxlVoij",
+            "mode": "list",
+            "cachedResultName": "IT_KB_Supabase",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/11IZVdhbW7gxJseyJMLuMkwZCnWxlVoij"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2100,
+        1480
+      ],
+      "id": "cb582838-edab-45cb-a991-abfe9593c2ad",
+      "name": "Google Drive",
+      "credentials": {
+        "googleApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_GOOGLEAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        960
+      ],
+      "id": "0d28b65c-ad5c-4c0f-8ae5-f413b3b0508e",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Set File ID').all()[0].json.file_id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf",
+              "drawingsToFormat": "application/pdf",
+              "slidesToFormat": "application/pdf",
+              "sheetsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "id": "fd7a9260-7d85-4129-bf2d-f7700781091b",
+      "name": "Download File",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        3120,
+        1480
+      ],
+      "executeOnce": true,
+      "typeVersion": 3,
+      "credentials": {
+        "googleApi": {
+          "id": "{{CREDENTIAL_ID}}",
+          "name": "{YOUR_GOOGLEAPI_CREDENTIAL}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2340,
+        1460
+      ],
+      "id": "5301406c-e904-4e1c-a3e5-3fb862d537e5",
+      "name": "Loop Over Items"
+    }
+  ],
+  "pinData": {
+    "Receive DMs": [
+      {
+        "json": {
+          "headers": {
+            "host": "trudiagnostic-ai.app.n8n.cloud",
+            "user-agent": "Slackbot 1.0 (+https://api.slack.com/robots)",
+            "content-length": "931",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "44.210.148.241",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "94a08bf286a90820-IAD",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "44.210.148.241, 172.70.38.42",
+            "x-forwarded-host": "trudiagnostic-ai.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-64-799ffc96d7-dxmqm",
+            "x-is-trusted": "yes",
+            "x-real-ip": "44.210.148.241",
+            "x-slack-request-timestamp": "1748967928",
+            "x-slack-signature": "v0=01f500ee087d573933e21bcb76d110579e6cc5c165bc839b23133b47f92e8cf7"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "token": "ox2ETOWTQnRxirPPLIfvfPgU",
+            "team_id": "T012U63QGEA",
+            "api_app_id": "A08UKLW1K4K",
+            "event": {
+              "user": "U08LD101QTG",
+              "type": "app_mention",
+              "ts": "1748967927.246999",
+              "client_msg_id": "873f8bd5-b34d-4c54-bc05-2c1cb036ac72",
+              "text": "<@U08UPV6QB3P> How to request a new company device?",
+              "team": "T012U63QGEA",
+              "blocks": [
+                {
+                  "type": "rich_text",
+                  "block_id": "mwQ9a",
+                  "elements": [
+                    {
+                      "type": "rich_text_section",
+                      "elements": [
+                        {
+                          "type": "user",
+                          "user_id": "U08UPV6QB3P"
+                        },
+                        {
+                          "type": "text",
+                          "text": " How to request a new company device?"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "channel": "C08LSAJCZ3N",
+              "event_ts": "1748967927.246999"
+            },
+            "type": "event_callback",
+            "event_id": "Ev090H5KGFFA",
+            "event_time": 1748967927,
+            "authorizations": [
+              {
+                "enterprise_id": null,
+                "team_id": "T012U63QGEA",
+                "user_id": "U08UPV6QB3P",
+                "is_bot": true,
+                "is_enterprise_install": false
+              }
+            ],
+            "is_ext_shared_channel": false,
+            "event_context": "4-eyJldCI6ImFwcF9tZW50aW9uIiwidGlkIjoiVDAxMlU2M1FHRUEiLCJhaWQiOiJBMDhVS0xXMUs0SyIsImNpZCI6IkMwOExTQUpDWjNOIn0"
+          },
+          "webhookUrl": "https://trudiagnostic-ai.app.n8n.cloud/webhook/44c26a10-d54a-46ce-a522-5d83e8a854be",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Set Text3": {
+      "main": [
+        [
+          {
+            "node": "Create File record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set File ID": {
+      "main": [
+        [
+          {
+            "node": "Delete Old Doc Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Created": {
+      "main": [
+        []
+      ]
+    },
+    "File Updated": {
+      "main": [
+        []
+      ]
+    },
+    "Upload File1": {
+      "main": [
+        [
+          {
+            "node": "Get Processing Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Job Ready?1": {
+      "main": [
+        [
+          {
+            "node": "Wait to stay within service limits1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Parsed Data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Parsed Data1": {
+      "main": [
+        [
+          {
+            "node": "Set Text3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI3": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert into Supabase Vectorstore1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create File record1": {
+      "main": [
+        [
+          {
+            "node": "Insert into Supabase Vectorstore1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Old Doc Rows": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert into Supabase Vectorstore1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Processing Status1": {
+      "main": [
+        [
+          {
+            "node": "Is Job Ready?1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait to stay within service limits1": {
+      "main": [
+        [
+          {
+            "node": "Get Processing Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Webhook": {
+      "main": [
+        [
+          {
+            "node": "Check if Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Bot": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Initial Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Initial Message": {
+      "main": [
+        [
+          {
+            "node": "Check DB Connection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Initial Message": {
+      "main": [
+        [
+          {
+            "node": "Send Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive DMs": {
+      "main": [
+        [
+          {
+            "node": "Verify Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Validate Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Response": {
+      "main": [
+        [
+          {
+            "node": "Delete Initial Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check DB Connection": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Delete Initial Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Initial Message1": {
+      "main": [
+        [
+          {
+            "node": "Send Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        []
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Upload File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Set File ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert into Supabase Vectorstore1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fc8fc80d-df9d-4ea2-9a01-6e88b7d74658",
+  "meta": {
+    "templateId": "4086",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "605da34acebe3f875fe4ecd61504f2cd54326f22bc50fe8ae1216076b9f60a43"
+  },
+  "id": "iYMoVYOcOZwgO7bx",
+  "tags": [
+    {
+      "createdAt": "2025-05-29T18:34:45.857Z",
+      "updatedAt": "2025-05-29T18:34:45.857Z",
+      "id": "PXoeC5h0XYICR73I",
+      "name": "IT Support"
+    }
+  ]
+}
