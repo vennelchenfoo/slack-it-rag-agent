@@ -33,6 +33,19 @@ RAG Agent Searches Knowledge Base
     ↓
 Response with Source Citation
 ```
+## Workflow Visualization
+
+### Document Ingestion Pipeline
+This workflow monitors Google Drive for new/updated documents, 
+processes them through LlamaParse, and indexes them in the vector database.
+
+![Document Ingestion Workflow](assets/screenshots/document-ingestion-workflow.png)
+
+### Slack Query Response Pipeline
+This workflow handles incoming Slack messages, searches the knowledge base, 
+and generates AI-powered responses with source citations.
+
+![Slack Query Workflow](assets/screenshots/slack-query-workflow.png)
 
 ### Technology Stack
 
