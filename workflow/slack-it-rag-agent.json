@@ -3,98 +3,20 @@
   "nodes": [
     {
       "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "authentication": "serviceAccount",
-        "triggerOn": "specificFolder",
-        "folderToWatch": {
-          "__rl": true,
-          "value": "{{YOUR_GOOGLE_DRIVE_FOLDER_ID}}",
-          "mode": "list",
-          "cachedResultName": "IT_KB_Supabase",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/{{YOUR_FOLDER_ID}}"
-        },
-        "event": "fileCreated",
-        "options": {}
-      },
-      "id": "0b48a55c-9b47-4913-9aec-264d3932c533",
-      "name": "File Created",
-      "type": "n8n-nodes-base.googleDriveTrigger",
-      "position": [
-        1780,
-        1000
-      ],
-      "typeVersion": 1,
-      "credentials": {
-        "googleApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_GOOGLEAPI_CREDENTIAL}"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "authentication": "serviceAccount",
-        "triggerOn": "specificFolder",
-        "folderToWatch": {
-          "__rl": true,
-          "value": "{{YOUR_GOOGLE_DRIVE_FOLDER_ID}}",
-          "mode": "list",
-          "cachedResultName": "IT_KB_Supabase",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/{{YOUR_FOLDER_ID}}"
-        },
-        "event": "fileUpdated",
-        "options": {}
-      },
-      "id": "e17a7bc1-6483-439b-acb0-2b13f66466e5",
-      "name": "File Updated",
-      "type": "n8n-nodes-base.googleDriveTrigger",
-      "position": [
-        1560,
-        980
-      ],
-      "typeVersion": 1,
-      "credentials": {
-        "googleApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_GOOGLEAPI_CREDENTIAL}"
-        }
-      }
-    },
-    {
-      "parameters": {
         "operation": "delete",
         "tableId": "documents",
         "filterType": "string",
         "filterString": "=metadata->>drive_file_id=like.*{{ $json.file_id }}*"
       },
-      "id": "b0e5b639-cf0e-4289-8ce7-96e6fd1e831f",
+      "id": "c20fa037-5efa-4d1a-8dae-e99505b0d9cb",
       "name": "Delete Old Doc Rows",
       "type": "n8n-nodes-base.supabase",
       "position": [
-        2860,
-        1480
+        -1280,
+        1280
       ],
       "typeVersion": 1,
-      "alwaysOutputData": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_SUPABASEAPI_CREDENTIAL}"
-        }
-      }
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -116,12 +38,12 @@
         },
         "options": {}
       },
-      "id": "c583b665-b756-4b8c-8150-34f559df9007",
+      "id": "3da27098-09d2-419f-ba43-91f0097c6e03",
       "name": "Set File ID",
       "type": "n8n-nodes-base.set",
       "position": [
-        2640,
-        1480
+        -1504,
+        1280
       ],
       "typeVersion": 3.4
     },
@@ -145,20 +67,14 @@
           ]
         }
       },
-      "id": "558473fe-cc06-41d8-ab06-cc6c03a8c40e",
+      "id": "2b5ee132-51d3-48be-868c-43701e06d82b",
       "name": "Create File record1",
       "type": "n8n-nodes-base.supabase",
       "position": [
-        4300,
-        1680
+        160,
+        1488
       ],
-      "typeVersion": 1,
-      "credentials": {
-        "supabaseApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_SUPABASEAPI_CREDENTIAL}"
-        }
-      }
+      "typeVersion": 1
     },
     {
       "parameters": {
@@ -179,12 +95,12 @@
           }
         }
       },
-      "id": "87e490c4-f9cb-4821-a234-a9c9d2c93836",
+      "id": "0d260308-d1e8-4b36-9781-e441301fdaa6",
       "name": "Default Data Loader1",
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "position": [
-        4600,
-        1500
+        464,
+        1312
       ],
       "typeVersion": 1
     },
@@ -193,20 +109,14 @@
         "model": "text-embedding-3-small",
         "options": {}
       },
-      "id": "373efd3c-f7dd-4efc-a268-ed05d8b2e309",
+      "id": "0c126681-5854-43cb-bf2e-80502bf73815",
       "name": "Embeddings OpenAI3",
       "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
       "position": [
-        4360,
-        1480
+        224,
+        1280
       ],
-      "typeVersion": 1,
-      "credentials": {
-        "openAiApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_OPENAIAPI_CREDENTIAL}"
-        }
-      }
+      "typeVersion": 1
     },
     {
       "parameters": {
@@ -214,12 +124,12 @@
         "chunkOverlap": 200,
         "options": {}
       },
-      "id": "17daf2dd-1d4c-498e-8404-7cc371f81894",
+      "id": "d7c7d97d-191f-4d3a-849a-8ab463b5e323",
       "name": "Recursive Character Text Splitter1",
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "position": [
-        4600,
-        1340
+        464,
+        1152
       ],
       "typeVersion": 1
     },
@@ -236,20 +146,14 @@
           "queryName": "match_documents"
         }
       },
-      "id": "afcfc728-9798-4703-998d-edc535eb859e",
+      "id": "05e6fd6a-1e5f-43ca-984e-a4e6c644375a",
       "name": "Insert into Supabase Vectorstore1",
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "position": [
-        4540,
-        1680
+        400,
+        1488
       ],
-      "typeVersion": 1,
-      "credentials": {
-        "supabaseApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_SUPABASEAPI_CREDENTIAL}"
-        }
-      }
+      "typeVersion": 1
     },
     {
       "parameters": {
@@ -283,24 +187,14 @@
         },
         "options": {}
       },
-      "id": "4a523ad6-d74d-4207-8347-facc7f313fdd",
+      "id": "b42b904f-fc74-461a-952d-4a8f1ce3c11f",
       "name": "Upload File1",
       "type": "n8n-nodes-base.httpRequest",
       "position": [
-        3300,
-        1480
+        -848,
+        1280
       ],
-      "typeVersion": 4.2,
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_HTTPHEADERAUTH_CREDENTIAL}"
-        },
-        "httpBearerAuth": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_HTTPBEARERAUTH_CREDENTIAL}"
-        }
-      }
+      "typeVersion": 4.2
     },
     {
       "parameters": {
@@ -318,36 +212,26 @@
         },
         "options": {}
       },
-      "id": "c0a43e5e-ec2b-49f5-bbc0-cef914c68c4c",
+      "id": "9865bc2e-b239-481f-9d1c-b27c7712263a",
       "name": "Get Processing Status1",
       "type": "n8n-nodes-base.httpRequest",
       "position": [
-        3500,
-        1480
+        -640,
+        1280
       ],
       "typeVersion": 4.2,
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_HTTPHEADERAUTH_CREDENTIAL}"
-        },
-        "httpBearerAuth": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_HTTPBEARERAUTH_CREDENTIAL}"
-        }
-      },
       "onError": "continueErrorOutput"
     },
     {
       "parameters": {
         "amount": 7
       },
-      "id": "68cc70a4-dba0-4ec9-8506-88bb20b37e87",
+      "id": "697daba1-4c45-4ce0-88a7-f462bc23d0ab",
       "name": "Wait to stay within service limits1",
       "type": "n8n-nodes-base.wait",
       "position": [
-        3920,
-        1240
+        -224,
+        1040
       ],
       "webhookId": "17a96ed6-b5ff-47bb-a8a2-39c1eb40185a",
       "typeVersion": 1.1
@@ -462,12 +346,12 @@
           "allMatchingOutputs": true
         }
       },
-      "id": "aef3b805-166e-47a8-a81c-900f999ae045",
+      "id": "82cbea50-5999-495b-9a82-ee7f63b8bd63",
       "name": "Is Job Ready?1",
       "type": "n8n-nodes-base.switch",
       "position": [
-        3680,
-        1480
+        -464,
+        1280
       ],
       "typeVersion": 3
     },
@@ -475,12 +359,12 @@
       "parameters": {
         "errorMessage": "Problem with Llamaparser. Error during parsing."
       },
-      "id": "5233be31-2ecf-4ddd-96e2-b0fd614f535f",
+      "id": "70e5b43b-b2dd-422b-8061-483f242d0de0",
       "name": "Stop and Error1",
       "type": "n8n-nodes-base.stopAndError",
       "position": [
-        3920,
-        1500
+        -224,
+        1312
       ],
       "typeVersion": 1
     },
@@ -495,24 +379,14 @@
           }
         }
       },
-      "id": "09283faa-4ab9-4d59-a610-3491d7f2daf8",
+      "id": "e6123fbe-8415-49cb-b7d5-06fce6d215e7",
       "name": "Get Parsed Data1",
       "type": "n8n-nodes-base.httpRequest",
       "position": [
-        3920,
-        1680
+        -224,
+        1488
       ],
-      "typeVersion": 4.2,
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_HTTPHEADERAUTH_CREDENTIAL}"
-        },
-        "httpBearerAuth": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_HTTPBEARERAUTH_CREDENTIAL}"
-        }
-      }
+      "typeVersion": 4.2
     },
     {
       "parameters": {
@@ -521,12 +395,12 @@
         "width": 280,
         "color": 3
       },
-      "id": "5ef6959d-1eb4-49cd-9b19-3b0e1aaa0eb7",
+      "id": "322ae09e-13fa-4682-90d2-ec11963c1c24",
       "name": "Sticky Note13",
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        3300,
-        1680
+        -848,
+        1488
       ],
       "typeVersion": 1
     },
@@ -544,12 +418,12 @@
         },
         "options": {}
       },
-      "id": "18fd1d0f-664e-4584-8154-794ca8aad768",
+      "id": "45c22259-ad28-4b8b-8040-b76fc9375bfd",
       "name": "Set Text3",
       "type": "n8n-nodes-base.set",
       "position": [
-        4100,
-        1680
+        -48,
+        1488
       ],
       "typeVersion": 3.4
     },
@@ -569,23 +443,23 @@
           }
         }
       },
-      "id": "ffb9f969-6f9c-40d9-a987-b7ad037da64f",
+      "id": "3cccd161-0a86-4130-a4ee-666d2aab9ebc",
       "name": "Verify Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "position": [
-        2580,
-        440
+        -1824,
+        32
       ],
       "typeVersion": 1
     },
     {
       "parameters": {},
-      "id": "5dbf15dc-85b1-45b8-a4a6-3b1f17ca9fde",
+      "id": "a7f1c8d3-680f-40c4-b562-ae096ca70a36",
       "name": "No Operation, do nothing",
       "type": "n8n-nodes-base.noOp",
       "position": [
-        3240,
-        240
+        -1152,
+        -160
       ],
       "typeVersion": 1
     },
@@ -613,12 +487,12 @@
         },
         "options": {}
       },
-      "id": "3d659c86-7aee-408d-b121-53f1439cf52b",
+      "id": "74e56872-97cd-4b2d-8455-17bb82417727",
       "name": "Check if Bot",
       "type": "n8n-nodes-base.if",
       "position": [
-        2780,
-        440
+        -1616,
+        32
       ],
       "typeVersion": 2
     },
@@ -641,21 +515,15 @@
           }
         }
       },
-      "id": "1e11180a-26d8-4fc4-b433-f223e9d3fed5",
+      "id": "cfe48e7c-9663-4081-9138-dc726ab994ac",
       "name": "Send Initial Message",
       "type": "n8n-nodes-base.slack",
       "position": [
-        3060,
-        460
+        -1344,
+        64
       ],
       "typeVersion": 2.1,
-      "webhookId": "82689462-0f3f-4619-a440-dccd8fb5f13a",
-      "credentials": {
-        "slackApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_SLACKAPI_CREDENTIAL}"
-        }
-      }
+      "webhookId": "82689462-0f3f-4619-a440-dccd8fb5f13a"
     },
     {
       "parameters": {
@@ -668,21 +536,15 @@
         },
         "timestamp": "={{ $('Send Initial Message').item.json[\"message_timestamp\"] }}"
       },
-      "id": "de2af6ca-4cb0-49e8-a616-09222e6f8a85",
+      "id": "6cf7b13b-3566-4166-8f00-62745a3eae89",
       "name": "Delete Initial Message",
       "type": "n8n-nodes-base.slack",
       "position": [
-        4540,
-        460
+        144,
+        64
       ],
       "typeVersion": 2.1,
-      "webhookId": "7c81cc08-d226-46a0-8808-cce6b5b6672d",
-      "credentials": {
-        "slackApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_SLACKAPI_CREDENTIAL}"
-        }
-      }
+      "webhookId": "7c81cc08-d226-46a0-8808-cce6b5b6672d"
     },
     {
       "parameters": {
@@ -703,21 +565,15 @@
           }
         }
       },
-      "id": "726fe33f-ac80-44c0-960c-2b13dfdc5929",
+      "id": "e46a6669-086a-4a4a-8254-4170f69106c4",
       "name": "Send Message",
       "type": "n8n-nodes-base.slack",
       "position": [
-        4800,
-        420
+        416,
+        16
       ],
       "typeVersion": 2.1,
-      "webhookId": "f95c5623-6bbc-4762-afd5-6d327a303789",
-      "credentials": {
-        "slackApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_SLACKAPI_CREDENTIAL}"
-        }
-      }
+      "webhookId": "f95c5623-6bbc-4762-afd5-6d327a303789"
     },
     {
       "parameters": {
@@ -726,12 +582,12 @@
         "responseMode": "responseNode",
         "options": {}
       },
-      "id": "1475ba8c-6d0e-4903-95d4-7d498e88bcbe",
+      "id": "0c55b36a-77ef-4c60-bf1b-7edeae46bf9a",
       "name": "Receive DMs",
       "type": "n8n-nodes-base.webhook",
       "position": [
-        2360,
-        440
+        -2032,
+        32
       ],
       "webhookId": "44c26a10-d54a-46ce-a522-5d83e8a854be",
       "typeVersion": 2
@@ -741,17 +597,17 @@
         "promptType": "define",
         "text": "={{ $json.input }}",
         "options": {
-          "humanMessage": "=A user asked an IT support question. Your mandatory process:\n\n1. Use the \u201cknowledge_base\u201d tool with their question as input.\n2. Wait for tool results before replying.\n3. If results: Use only those to answer and reference sources.\n4. If no results: Use this exact phrase:  \n   \u201cI don\u2019t have information about that in our knowledge base. Please contact IT support directly or try rephrasing your question with more specific terms.\u201d\n\nUser\u2019s question:  \n{{ $json.input }}\n\n\nRemember: You cannot answer ANY question without first consulting the knowledge_base tool. No exceptions.\n\n{format_instructions}",
-          "systemMessage": "=You are TruBot-IT, the company\u2019s IT assistant. Your ONLY source of truth is the \u201cknowledge_base\u201d tool, which searches IT documentation and procedures from the Supabase database.\n\n**Rules:**\n- For every user message, you MUST first search the knowledge_base tool with the full question.\n- ONLY respond based on the information returned by the tool.\n- If the tool returns results, use ONLY those to answer and reference the sources.\n- If the tool returns no results, reply exactly: \u201cI don\u2019t have information about that in our knowledge base. Please contact IT support directly or try rephrasing your question with more specific terms.\u201d\n- NEVER answer from general knowledge, memory, or outside data.\n- NEVER make up answers or summarize outside the tool\u2019s results.\n- Format all Slack links as <url|readable-name>.\n- Do not return arrays or objects inside \"action_input\"\u2014always a single string.\n\nRespond in a friendly, concise, and professional tone.",
+          "humanMessage": "=A user asked an IT support question. Your mandatory process:\n\n1. Use the “knowledge_base” tool with their question as input.\n2. Wait for tool results before replying.\n3. If results: Use only those to answer and reference sources.\n4. If no results: Use this exact phrase:  \n   “I don’t have information about that in our knowledge base. Please contact IT support directly or try rephrasing your question with more specific terms.”\n\nUser’s question:  \n{{ $json.input }}\n\n\nRemember: You cannot answer ANY question without first consulting the knowledge_base tool. No exceptions.\n\n{format_instructions}",
+          "systemMessage": "=You are TruBot-IT, the company’s IT assistant. Your ONLY source of truth is the “knowledge_base” tool, which searches IT documentation and procedures from the Supabase database.\n\n**Rules:**\n- For every user message, you MUST first search the knowledge_base tool with the full question.\n- ONLY respond based on the information returned by the tool.\n- If the tool returns results, use ONLY those to answer and reference the sources.\n- If the tool returns no results, reply exactly: “I don’t have information about that in our knowledge base. Please contact IT support directly or try rephrasing your question with more specific terms.”\n- NEVER answer from general knowledge, memory, or outside data.\n- NEVER make up answers or summarize outside the tool’s results.\n- Format all Slack links as <url|readable-name>.\n- Do not return arrays or objects inside \"action_input\"—always a single string.\n\nRespond in a friendly, concise, and professional tone.",
           "maxIterations": 5
         }
       },
-      "id": "c1325928-3849-4690-9c10-bd31eec8e936",
+      "id": "57c799c4-e0c5-4584-bf41-f8e91cea5639",
       "name": "AI Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        3820,
-        520
+        -576,
+        112
       ],
       "typeVersion": 1.5
     },
@@ -759,39 +615,27 @@
       "parameters": {
         "options": {}
       },
-      "id": "b930e664-e669-4105-bd10-3dbbc9764a08",
+      "id": "7b17e8b8-1d56-44a8-92d7-d8640de66994",
       "name": "OpenAI Chat Model1",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "position": [
-        3600,
-        780
+        -800,
+        384
       ],
-      "typeVersion": 1,
-      "credentials": {
-        "openAiApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_OPENAIAPI_CREDENTIAL}"
-        }
-      }
+      "typeVersion": 1
     },
     {
       "parameters": {
         "options": {}
       },
-      "id": "72f7e646-6beb-4f41-8e9c-01167dca5384",
+      "id": "7bfd0d32-009e-41a1-80b4-f04ec89fa02d",
       "name": "Embeddings OpenAI2",
       "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
       "position": [
-        4060,
-        980
+        -336,
+        576
       ],
-      "typeVersion": 1.2,
-      "credentials": {
-        "openAiApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_OPENAIAPI_CREDENTIAL}"
-        }
-      }
+      "typeVersion": 1.2
     },
     {
       "parameters": {
@@ -809,20 +653,14 @@
           "queryName": "match_documents"
         }
       },
-      "id": "cafb01ac-db44-407b-b104-4593269be78a",
+      "id": "b19eab7f-2436-40ff-ac3b-9457307a5936",
       "name": "Supabase Vector Store2",
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "position": [
-        4020,
-        740
+        -384,
+        336
       ],
-      "typeVersion": 1.1,
-      "credentials": {
-        "supabaseApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_SUPABASEAPI_CREDENTIAL}"
-        }
-      }
+      "typeVersion": 1.1
     },
     {
       "parameters": {
@@ -831,10 +669,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4260,
-        500
+        -128,
+        96
       ],
-      "id": "82071b81-8fd0-4e5c-8406-b290b9d7d214",
+      "id": "c6216456-f6e8-45b4-acc9-4394e9b37875",
       "name": "Validate Response"
     },
     {
@@ -847,17 +685,11 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3260,
-        460
+        -1136,
+        64
       ],
-      "id": "3c3a8fa9-67c5-4391-966a-4b8845d51203",
+      "id": "40cc2f2f-d003-4ccf-a835-40c70a715f98",
       "name": "Check DB Connection",
-      "credentials": {
-        "supabaseApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_SUPABASEAPI_CREDENTIAL}"
-        }
-      },
       "onError": "continueRegularOutput"
     },
     {
@@ -888,10 +720,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        3460,
-        460
+        -944,
+        64
       ],
-      "id": "50c521fa-7dd6-429e-a46a-18586d71b0fe",
+      "id": "ebc209eb-2f16-4b63-b3c4-fc44ca781233",
       "name": "If"
     },
     {
@@ -911,10 +743,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        3880,
-        240
+        -512,
+        -160
       ],
-      "id": "15a397ea-c65b-40cf-b8bc-7331728d9df3",
+      "id": "b835b334-3b98-4db2-863e-65a201aa05cf",
       "name": "Edit Fields"
     },
     {
@@ -926,17 +758,11 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [
-        3740,
-        820
+        -656,
+        416
       ],
-      "id": "80ad71be-fe3c-44d6-8b0c-a672e43435c6",
-      "name": "Postgres Chat Memory",
-      "credentials": {
-        "postgres": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_POSTGRES_CREDENTIAL}"
-        }
-      }
+      "id": "e89a3248-e136-4cb7-bf6f-12846b2c4478",
+      "name": "Postgres Chat Memory"
     },
     {
       "parameters": {
@@ -957,21 +783,15 @@
           }
         }
       },
-      "id": "ce822003-3d62-452f-a0fc-b5e26845a211",
+      "id": "6db3b9a3-73b4-47fe-a24a-a95d445e840a",
       "name": "Send Message1",
       "type": "n8n-nodes-base.slack",
       "position": [
-        4360,
-        240
+        -32,
+        -160
       ],
       "typeVersion": 2.1,
-      "webhookId": "f95c5623-6bbc-4762-afd5-6d327a303789",
-      "credentials": {
-        "slackApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_SLACKAPI_CREDENTIAL}"
-        }
-      }
+      "webhookId": "f95c5623-6bbc-4762-afd5-6d327a303789"
     },
     {
       "parameters": {
@@ -984,21 +804,15 @@
         },
         "timestamp": "={{ $('Send Initial Message').item.json[\"message_timestamp\"] }}"
       },
-      "id": "958c6072-b2e7-4de0-9f80-cc22a340f3fa",
+      "id": "1b829906-7207-46e7-ae80-7ea2afa9490e",
       "name": "Delete Initial Message1",
       "type": "n8n-nodes-base.slack",
       "position": [
-        4140,
-        200
+        -256,
+        -208
       ],
       "typeVersion": 2.1,
-      "webhookId": "7c81cc08-d226-46a0-8808-cce6b5b6672d",
-      "credentials": {
-        "slackApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_SLACKAPI_CREDENTIAL}"
-        }
-      }
+      "webhookId": "7c81cc08-d226-46a0-8808-cce6b5b6672d"
     },
     {
       "parameters": {
@@ -1023,10 +837,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        3660,
-        480
+        -736,
+        80
       ],
-      "id": "4d4f6965-6494-412d-8bfe-91c1d7a363b8",
+      "id": "069deef3-e39d-452f-90b0-fc15abf9575d",
       "name": "Set"
     },
     {
@@ -1034,10 +848,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1,
       "position": [
-        3880,
-        820
+        -512,
+        416
       ],
-      "id": "60147fde-d854-4587-b2de-496488fd6750",
+      "id": "eb1fd195-0605-4a00-9254-faeba639e2f2",
       "name": "Think"
     },
     {
@@ -1045,10 +859,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [
-        4380,
-        760
+        -16,
+        352
       ],
-      "id": "fcbdc8b9-0741-44ab-a469-fbcd8ad0c91f",
+      "id": "01f3be8f-cb34-4207-89f6-e22293f5de10",
       "name": "Calculator"
     },
     {
@@ -1056,11 +870,11 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        1900,
-        1460
+        -2240,
+        1264
       ],
-      "id": "f3d47299-2853-4c7a-8133-59f838a9c768",
-      "name": "When clicking \u2018Execute workflow\u2019"
+      "id": "fe162cad-5984-4a45-9507-6e1d0b9c6f86",
+      "name": "When clicking ‘Execute workflow’"
     },
     {
       "parameters": {
@@ -1081,31 +895,11 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        2100,
-        1480
+        -2048,
+        1280
       ],
-      "id": "cb582838-edab-45cb-a991-abfe9593c2ad",
-      "name": "Google Drive",
-      "credentials": {
-        "googleApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_GOOGLEAPI_CREDENTIAL}"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "fieldToSplitOut": "id",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitOut",
-      "typeVersion": 1,
-      "position": [
-        1340,
-        960
-      ],
-      "id": "0d28b65c-ad5c-4c0f-8ae5-f413b3b0508e",
-      "name": "Split Out"
+      "id": "34b9813c-4a37-48a4-89ce-325586b57f9d",
+      "name": "Google Drive"
     },
     {
       "parameters": {
@@ -1127,21 +921,15 @@
           }
         }
       },
-      "id": "fd7a9260-7d85-4129-bf2d-f7700781091b",
+      "id": "8ee77356-4254-4880-8ff1-d5153e7dd5cf",
       "name": "Download File",
       "type": "n8n-nodes-base.googleDrive",
       "position": [
-        3120,
-        1480
+        -1024,
+        1280
       ],
       "executeOnce": true,
-      "typeVersion": 3,
-      "credentials": {
-        "googleApi": {
-          "id": "{{CREDENTIAL_ID}}",
-          "name": "{YOUR_GOOGLEAPI_CREDENTIAL}"
-        }
-      }
+      "typeVersion": 3
     },
     {
       "parameters": {
@@ -1152,11 +940,43 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        2340,
-        1460
+        -1808,
+        1264
       ],
-      "id": "5301406c-e904-4e1c-a3e5-3fb862d537e5",
+      "id": "c42c4d53-57c6-42e8-b605-b7aabd39d95f",
       "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "content": "Slack Query Workflow",
+        "height": 1088,
+        "width": 2864,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2176,
+        -288
+      ],
+      "typeVersion": 1,
+      "id": "116d23d2-0af3-461c-ba3e-5065304c620a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Document Ingestion Workflow",
+        "height": 848,
+        "width": 3200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2272,
+        992
+      ],
+      "typeVersion": 1,
+      "id": "42f4b9f3-9096-49f3-b729-bad638a9f33e",
+      "name": "Sticky Note1"
     }
   ],
   "pinData": {
@@ -1266,16 +1086,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "File Created": {
-      "main": [
-        []
-      ]
-    },
-    "File Updated": {
-      "main": [
-        []
       ]
     },
     "Upload File1": {
@@ -1628,7 +1438,7 @@
         ]
       ]
     },
-    "When clicking \u2018Execute workflow\u2019": {
+    "When clicking ‘Execute workflow’": {
       "main": [
         [
           {
@@ -1648,11 +1458,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "Split Out": {
-      "main": [
-        []
       ]
     },
     "Download File": {
@@ -1690,22 +1495,20 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "fc8fc80d-df9d-4ea2-9a01-6e88b7d74658",
+  "versionId": "186a9ac1-2b60-420e-ac4d-2f92c883d3a2",
   "meta": {
-    "templateId": "4086",
-    "templateCredsSetupCompleted": true,
-    "instanceId": "605da34acebe3f875fe4ecd61504f2cd54326f22bc50fe8ae1216076b9f60a43"
+    "instanceId": "74749c04e8013dbd1bd718052e52bd30815cbd8e3e4fae0947221388b864986d"
   },
-  "id": "iYMoVYOcOZwgO7bx",
+  "id": "CGmLLMVu46006MFr",
   "tags": [
     {
-      "createdAt": "2025-05-29T18:34:45.857Z",
-      "updatedAt": "2025-05-29T18:34:45.857Z",
-      "id": "PXoeC5h0XYICR73I",
+      "createdAt": "2025-10-26T22:33:00.042Z",
+      "updatedAt": "2025-10-26T22:33:00.042Z",
+      "id": "kVGCz5YRNZr6Ib3c",
       "name": "IT Support"
     }
   ]
